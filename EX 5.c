@@ -125,3 +125,76 @@ int main(){
 
 
 //SCWNARIO-2
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int studentID;
+    char name[50];
+    int age;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+Node* createNode(int studentID, const char* name, int age) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->studentID = studentID;
+    snprintf(newNode->name, sizeof(newNode->name), "%s", name);
+    newNode->age = age;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+Node* addStudent(Node* root, int studentID, const char* name, int age) {
+    if (root == NULL) {
+        return createNode(studentID, name, age);
+    }
+    if (studentID < root->studentID) {
+        root->left = addStudent(root->left, studentID, name, age);
+    } else if (studentID > root->studentID) {
+        root->right = addStudent(root->right, studentID, name, age);
+    }
+    return root;
+}
+
+Node* findStudent(Node* root, int studentID) {
+    if (root == NULL || root->studentID == studentID) {
+        return root;
+    }
+    if (studentID < root->studentID) {
+        return findStudent(root->left, studentID);
+    }
+    return findStudent(root->right, studentID);
+}
+
+void inOrderTraversal(Node* root) {
+    if (root != NULL) {
+        inOrderTraversal(root->left);
+        printf("Student ID: %d, Name: %s, Age: %d\n", root->studentID, root->name, root->age);
+        inOrderTraversal(root->right);
+    }
+}
+
+int main() {
+    Node* root = NULL;
+
+    root = addStudent(root, 102, "Alice", 20);
+    root = addStudent(root, 101, "Bob", 21);
+    root = addStudent(root, 103, "Charlie", 19);
+
+    int searchID = 102;
+    Node* student = findStudent(root, searchID);
+    if (student != NULL) {
+        printf("Found Student - ID: %d, Name: %s, Age: %d\n", student->studentID, student->name, student->age);
+    } else {
+        printf("Student with ID %d not found.\n", searchID);
+    }
+
+    printf("\nAll Student IDs in Ascending Order:\n");
+    inOrderTraversal(root);
+
+    return 0;
+}
+```
